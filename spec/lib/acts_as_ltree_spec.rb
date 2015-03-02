@@ -36,9 +36,9 @@ RSpec.describe ActsAsLtree do
     end
   end
 
-  describe "ancestors" do
+  describe "descendants" do
     it "fetches proper results" do
-      expect(ruby.ancestors).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
+      expect(ruby.descendants).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
     end
   end
 end

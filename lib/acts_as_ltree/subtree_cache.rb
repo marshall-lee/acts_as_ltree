@@ -23,11 +23,11 @@ module ActsAsLtree
         end
     end
 
-    def ancestors
+    def descendants
       unless max_depth
         cache.slice(*cache.keys.select! { |d| d > path_depth }).values.flatten!
       else
-        SubtreeCache.new(object, options.merge(cache: nil, max_depth: nil)).ancestors
+        SubtreeCache.new(object, options.merge(cache: nil, max_depth: nil)).descendants
       end
     end
 
@@ -102,8 +102,8 @@ module ActsAsLtree
         @subtree.children
       end
 
-      def ancestors
-        @subtree.ancestors
+      def descendants
+        @subtree.descendants
       end
     end
   end
