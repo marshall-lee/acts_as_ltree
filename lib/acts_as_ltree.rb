@@ -15,13 +15,25 @@ module ActsAsLtree
         SubtreeCache::Proxy.new(self, base_options.merge(max_depth: 1)).children
       end
 
-      define_method :ancestors do
-        SubtreeCache::Proxy.new(self, base_options).ancestors
+      define_method :descendants do
+        SubtreeCache::Proxy.new(self, base_options).descendants
       end
 
-      define_method :preload_ancestors do |options|
+      define_method :preload_descendants do |options|
         options = options.slice(:max_depth)
         Subtree::Proxy.new(self, base_options.merge(options))
+      end
+
+      define_method :new_child do |attributes|
+        leaf_label = attributes.delete(:leaf_label)
+        attributes[column_name] = "#{path}.#{leaf_label}"
+        self.class.new(attributes)
+      end
+
+      define_method :create_child do |attributes|
+        leaf_label = attributes.delete(:leaf_label)
+        attributes[column_name] = "#{path}.#{leaf_label}"
+        self.class.create(attributes)
       end
     end
   end
