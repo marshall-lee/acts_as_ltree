@@ -12,8 +12,8 @@ module ActsAsLtree
       }
       relation_builder = RelationBuilder.new(self, column_name)
 
-      define_singleton_method :descendants_of do |path, depth=nil|
-        relation_builder.descendants(self, path, depth)
+      define_singleton_method :descendants_of do |path, options={}|
+        relation_builder.descendants(self, path, options)
       end
 
       define_singleton_method :ancestors_of do |path|
@@ -29,11 +29,13 @@ module ActsAsLtree
       end
 
       define_method :children do
-        SubtreeCache::Proxy.new(self, base_options.merge(max_depth: 1)).children
+        path = send(column_name)
+        self.class.descendants_of(path, exact_depth: 1)
       end
 
       define_method :descendants do
-        SubtreeCache::Proxy.new(self, base_options).descendants
+        path = send(column_name)
+        self.class.descendants_of(path, min_depth: 1)
       end
 
       define_method :preload_descendants do |options|

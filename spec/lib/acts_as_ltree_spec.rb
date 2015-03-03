@@ -38,6 +38,9 @@ RSpec.describe ActsAsLtree do
   let!(:compsci)       { Tag.create path: 'programming.computer_science' }
 
   describe "children" do
+    # TODO: change implementation and remove pending
+    before { pending "new implementation is missing" }
+
     it "fetches proper results" do
       expect(programming.children).to contain_exactly(ruby, compsci)
       expect(ruby.children).to contain_exactly(ruby_on_rails, rspec)
@@ -55,6 +58,9 @@ RSpec.describe ActsAsLtree do
   end
 
   describe "descendants" do
+    # TODO: change implementation and remove pending
+    before { pending "new implementation is missing" }
+
     it "fetches proper results" do
       expect(ruby.descendants).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
     end
@@ -84,6 +90,21 @@ RSpec.describe ActsAsLtree do
     describe "descendants_of" do
       it "fetches proper results" do
         expect(Tag.descendants_of('programming.ruby.ruby_on_rails')).to contain_exactly(ruby_on_rails, sinatra, rspec_rails)
+      end
+
+      describe "with min_depth" do
+        # TODO: add specs
+        pending "not implemented"
+      end
+
+      describe "with max_depth" do
+        # TODO: add specs
+        pending "not implemented"
+      end
+
+      describe "with exact_depth" do
+        # TODO: add specs
+        pending "not implemented"
       end
     end
 

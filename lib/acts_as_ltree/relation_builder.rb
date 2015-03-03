@@ -23,8 +23,9 @@ module ActsAsLtree
       )
     end
 
-    def descendants(relation, path, depth=nil)
-      unless depth
+    def descendants(relation, path, options={})
+      min_depth, max_depth, exact_depth = options.values_at :min_depth, :max_depth, :exact_depth
+      unless min_depth || max_depth || exact_depth
         relation.where(
           Arel::Nodes::LtreeIsDescendant.new(
             column,
@@ -32,7 +33,11 @@ module ActsAsLtree
           )
         )
       else
-        matching_lquery(relation, "#{path}.*")
+        # TODO: call matching_lquery with "#{path}.*{n,m}" query (or even "#{path}.*{n} if exact_depth is given)
+        #       raise ArgumentError if one of *_depth options is not Integer (if present)
+        #       raise ArgumentError if exact_depth is present but min_depth and max_depth are present
+        #       if min_depth == max_depth then perform *{n} query instead of *{n,n}
+        raise NotImplementedError
       end
     end
 
