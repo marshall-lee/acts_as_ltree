@@ -43,7 +43,7 @@ RSpec.describe ActsAsLtree do
   end
 
   describe "class method" do
-    it "is responsible my model" do
+    it "has response by model" do
       expect(Tag.create).to respond_to(:new_child)
     end
   end
@@ -56,6 +56,7 @@ RSpec.describe ActsAsLtree do
     it "matches proper path" do
       expect(programming.create_child(leaf_label: 'lambda').path).to eq('programming.lambda')
     end
+
   end
 
   describe "new children making method" do
