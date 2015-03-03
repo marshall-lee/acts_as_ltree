@@ -20,6 +20,15 @@ RSpec.describe ActsAsLtree do
     it { should respond_to(:create_child) }
   end
 
+  describe "class methods" do
+    subject { Tag }
+
+    it { should respond_to(:descendants_of) }
+    it { should respond_to(:ancestors_of) }
+    it { should respond_to(:matching_lquery) }
+    it { should respond_to(:matching_ltxtquery) }
+  end
+
   let!(:programming)   { Tag.create path: 'programming' }
   let!(:ruby)          { Tag.create path: 'programming.ruby' }
   let!(:rspec)         { Tag.create path: 'programming.ruby.rspec' }
