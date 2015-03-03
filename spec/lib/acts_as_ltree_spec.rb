@@ -41,4 +41,32 @@ RSpec.describe ActsAsLtree do
       expect(ruby.descendants).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
     end
   end
+
+  describe "class method" do
+    it "has response by model" do
+      expect(Tag.create).to respond_to(:new_child)
+    end
+  end
+
+  describe "children creation method" do
+    it "creates and saves child object" do
+      expect(programming.create_child(leaf_label: 'lambda')).to be_persisted
+    end 
+
+    it "matches proper path" do
+      expect(programming.create_child(leaf_label: 'lambda').path).to eq('programming.lambda')
+    end
+
+  end
+
+  describe "new children making method" do
+    it "creates new child without saving" do
+      expect(programming.new_child(leaf_label: 'lambda')).to be_new_record
+    end
+
+    it "matches proper path" do
+      expect(programming.new_child(leaf_label: 'lambda').path).to eq('programming.lambda')
+    end
+  end
+
 end
