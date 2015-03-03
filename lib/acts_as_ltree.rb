@@ -38,7 +38,7 @@ module ActsAsLtree
 
       define_method :preload_descendants do |options|
         options = options.slice(:max_depth)
-        Subtree::Proxy.new(self, base_options.merge(options))
+        SubtreeCache::Proxy.new(self, base_options.merge(options))
       end
 
       define_method :new_child do |attributes|
