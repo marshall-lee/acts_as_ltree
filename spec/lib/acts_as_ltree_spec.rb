@@ -11,6 +11,15 @@ RSpec.describe ActsAsLtree do
     end
   end
 
+  describe "instance methods" do
+    subject { Tag.new }
+
+    it { should respond_to(:descendants) }
+    it { should respond_to(:children) }
+    it { should respond_to(:new_child) }
+    it { should respond_to(:create_child) }
+  end
+
   let!(:programming)   { Tag.create path: 'programming' }
   let!(:ruby)          { Tag.create path: 'programming.ruby' }
   let!(:rspec)         { Tag.create path: 'programming.ruby.rspec' }
@@ -39,12 +48,6 @@ RSpec.describe ActsAsLtree do
   describe "descendants" do
     it "fetches proper results" do
       expect(ruby.descendants).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
-    end
-  end
-
-  describe "class method" do
-    it "has response by model" do
-      expect(Tag.create).to respond_to(:new_child)
     end
   end
 
