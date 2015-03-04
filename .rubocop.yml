@@ -1,3 +1,8 @@
+AllCops:
+  Exclude:
+    - spec/**/*
+    - acts_as_ltree.gemspec
+
 Style/StringLiterals:
   Enabled: false
 
