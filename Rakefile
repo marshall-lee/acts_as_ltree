@@ -6,19 +6,19 @@ task :default => [:spec, :rubocop]
 task "db:setup" do
   db = %x[psql -c "create database acts_as_ltree_test"]
   if db.delete("\n").eql?("CREATE DATABASE")
-    puts "Database acts_as_ltree_test was successfully created."
+  	puts "Database acts_as_ltree_test was successfully created."
   else
-    puts db
+  	puts db
   end
 
   ltree = %x[psql -d acts_as_ltree_test -c "create extension if not exists ltree"]
   if ltree.delete("\n").eql?("CREATE EXTENSION")
-    puts "Ltree extension was successfully created."
+  	puts "Ltree extension was successfully created."
   else 
-    puts ltree
+  	puts ltree
   end
 end
 
 task :rubocop do
-  puts %x[rubocop]
+	puts %x[rubocop]
 end
