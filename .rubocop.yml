@@ -23,3 +23,11 @@ Style/MethodDefParentheses:
 Style/MethodName:
   Exclude:
     - lib/acts_as_ltree/arel.rb
+
+Metrics/MethodLength:
+  Exclude:
+    - lib/acts_as_ltree.rb
+
+Metrics/AbcSize:
+  Exclude:
+    - lib/acts_as_ltree.rb
