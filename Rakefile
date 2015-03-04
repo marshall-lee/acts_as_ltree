@@ -8,14 +8,19 @@ RuboCop::RakeTask.new
 task :default => [:spec, :rubocop]
 
 task 'db:setup' do
-  db = `psql -c "create database acts_as_ltree_test"`
+  base_cmd = "psql"
+
+  username = ENV['POSTGRES_USERNAME']
+  base_cmd << " -U #{username}" if username
+
+  db = `#{base_cmd} -c "create database acts_as_ltree_test"`
   if db.strip == 'CREATE DATABASE'
     puts 'Database acts_as_ltree_test was successfully created.'
   else
     puts db
   end
 
-  ltree = `psql -d acts_as_ltree_test -c "create extension if not exists ltree"`
+  ltree = `#{base_cmd} -d acts_as_ltree_test -c "create extension if not exists ltree"`
   if ltree.strip == 'CREATE EXTENSION'
     puts 'ltree extension was successfully created.'
   else
