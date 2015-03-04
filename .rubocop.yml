@@ -36,3 +36,7 @@ Metrics/MethodLength:
 Metrics/AbcSize:
   Exclude:
     - lib/acts_as_ltree.rb
+
+Metrics/LineLength:
+  Exclude:
+    - Rakefile
