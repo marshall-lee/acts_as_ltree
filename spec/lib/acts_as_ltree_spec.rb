@@ -201,5 +201,33 @@ RSpec.describe ActsAsLtree do
         expect(Tag.matching_ltxtquery('!ruby_on_rails & programming & ruby')).to contain_exactly(ruby, rspec)
       end
     end
+
+    describe "preload_descendants" do
+      it "should return correctly proxied object" do
+        expect(ruby.preload_descendants).to be_kind_of(Tag)
+      end
+
+      describe "fetching all descendants" do
+        let(:programming_preloaded) {
+          programming.preload_descendants
+        }
+
+        it "should fetch proper results" do
+          expect(programming_preloaded.descendants).to contain_exactly(ruby, compsci, ruby_on_rails, rspec, sinatra, rspec_rails)
+          expect(programming_preloaded.children).to contain_exactly(ruby, compsci)
+        end
+
+        describe "when traversing" do
+          it "should execute only one query" do
+            expect(ActiveRecord::Base.connection).to receive(:exec_query).once.and_call_original
+            programming_preloaded.children.each do |tag|
+              tag.children.each do |tag1|
+                tag1.children.each { }
+              end
+            end
+          end
+        end
+      end
+    end
   end
 end

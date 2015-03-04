@@ -2,91 +2,65 @@ require 'active_support/proxy_object'
 
 module ActsAsLtree
   class SubtreeCache
-    def initialize(object, options={})
-      @object      = object
-      @options     = options
-      options[:depth] ||= 0
+    def initialize(root_object, options={})
+      @root_object       = root_object
+      @proxy_options     = options
+
+      proxy_options[:cache] = self
     end
 
-    def children
-      @children ||=
-        begin
-          (cache[path_depth+1] || {}).select do |obj|
-            obj.send(column_name).start_with? "#{path}."
+    def children_for(object)
+      relative_depth = object.depth - root_depth
+      cache = self
+
+      object.children.extending do
+        define_method :load do
+          @records = (cache.group_by_depth[object.depth+1] || []).select do |obj|
+            obj.send(cache.proxy_options[:column_name]).start_with? "#{object.path}."
           end.map do |obj|
-            if cacheable_next?
-              Proxy.new obj, options.merge(depth: depth + 1)
+            if !cache.max_depth || relative_depth + 1 < cache.max_depth
+              Proxy.new obj, cache.proxy_options
             else
-              Proxy.new obj, options.merge(cache: nil, depth: 0, max_depth: 1)
+              obj
             end
           end
         end
-    end
-
-    def descendants
-      unless max_depth
-        cache.slice(*cache.keys.select! { |d| d > path_depth }).values.flatten!
-      else
-        SubtreeCache.new(object, options.merge(cache: nil, max_depth: nil)).descendants
       end
     end
 
-    private
-    attr_reader :object, :options
-
-    def model
-      object.class
-    end
-
-    def path
-      object.send column_name
-    end
-
-    def path_depth
-      @path_depth ||= path.count('.')
-    end
-
-    [
-      :column_name,
-      :depth,
-      :max_depth
-    ].each do |name|
-      class_eval <<-RUBY, __FILE__, __LINE__+1
-        def #{name}
-          options[:#{name}]
+    def descendants_for(object)
+      descendants = object.descendants
+      unless max_depth
+        cache = self
+        descendants.extending do
+          define_method :load do
+            descendant_depths = cache.all_depths.select{ |depth| depth > object.depth }
+            @records = cache.group_by_depth.values_at(*descendant_depths).flatten
+          end
         end
-      RUBY
+      else
+        descendants
+      end
     end
 
-    def cacheable_next?
-      !max_depth || depth + 1 < max_depth
+    attr_reader :root_object, :max_depth, :proxy_options
+
+    def root_depth
+      root_object.depth
     end
 
-    def cache
-      options[:cache] ||=
-        begin
-          depth_pattern = if max_depth
-                            "*{#{max_depth}}"
-                          else
-                            "*"
-                          end
-          relation = model.where(
-            Arel::Nodes::LtreeMatchLquery.new(
-              model.arel_table[column_name],
-              Arel::Nodes.build_quoted("#{path}.#{depth_pattern}")
-            )
-          )
-          relation.to_a
-            .group_by do |obj|
-              obj.send(column_name).count('.')
-            end
-        end
+    def group_by_depth
+      @by_depth ||= root_object.descendants.group_by(&:depth)
+    end
+
+    def all_depths
+      group_by_depth.keys
     end
 
     class Proxy < ActiveSupport::ProxyObject
       def initialize(object, options={})
         @object      = object
-        @subtree     = SubtreeCache.new object, options
+        @cache       = options[:cache] || SubtreeCache.new(object, options)
       end
 
       def respond_to_missing?(method, include_private = false)
@@ -99,11 +73,11 @@ module ActsAsLtree
       end
 
       def children
-        @subtree.children
+        @cache.children_for(@object)
       end
 
       def descendants
-        @subtree.descendants
+        @cache.descendants_for(@object)
       end
     end
   end

@@ -7,10 +7,10 @@ module ActsAsLtree
   module ClassMethods
     def acts_as_ltree(opts={})
       column_name = opts[:on] || :path
+      relation_builder = RelationBuilder.new(self, column_name)
       base_options = {
         column_name: column_name
       }
-      relation_builder = RelationBuilder.new(self, column_name)
 
       define_singleton_method :descendants_of do |path, options={}|
         relation_builder.descendants(self, path, options)
@@ -38,8 +38,7 @@ module ActsAsLtree
         self.class.descendants_of(path, min_depth: 1)
       end
 
-      define_method :preload_descendants do |options|
-        options = options.slice(:max_depth)
+      define_method :preload_descendants do |options={}|
         SubtreeCache::Proxy.new(self, base_options.merge(options))
       end
 
@@ -53,6 +52,10 @@ module ActsAsLtree
         leaf_label = attributes.delete(:leaf_label)
         attributes[column_name] = "#{path}.#{leaf_label}"
         self.class.create(attributes)
+      end
+
+      define_method :depth do
+        send(column_name).count('.')
       end
     end
   end
