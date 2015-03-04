@@ -33,10 +33,10 @@ module ActsAsLtree
           )
         )
       else
-        raise ArgumentError, "min_depth must be an Integer" if min_depth && !min_depth.is_a?(Integer)
-        raise ArgumentError, "max_depth must be an Integer" if max_depth && !max_depth.is_a?(Integer)
-        raise ArgumentError, "exact_depth must be an Integer" if exact_depth && !exact_depth.is_a?(Integer)
-        raise ArgumentError, "exact_depth cannot be used with min_depth or max_depth" if exact_depth && (min_depth || max_depth)
+        fail ArgumentError, "min_depth must be an Integer" if min_depth && !min_depth.is_a?(Integer)
+        fail ArgumentError, "max_depth must be an Integer" if max_depth && !max_depth.is_a?(Integer)
+        fail ArgumentError, "exact_depth must be an Integer" if exact_depth && !exact_depth.is_a?(Integer)
+        fail ArgumentError, "exact_depth cannot be used with min_depth or max_depth" if exact_depth && (min_depth || max_depth)
 
         if (!min_depth.nil? && min_depth.eql?(max_depth))
           exact_depth = min_depth
