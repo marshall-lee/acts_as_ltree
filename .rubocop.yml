@@ -7,3 +7,19 @@ Style/HashSyntax:
 
 Style/Documentation:
   Enabled: false
+
+Style/Alias:
+  Exclude:
+    - lib/acts_as_ltree/arel.rb
+
+Style/SingleLineMethods:
+  Exclude:
+    - lib/acts_as_ltree/arel.rb
+
+Style/MethodDefParentheses:
+  Exclude:
+    - lib/acts_as_ltree/arel.rb
+
+Style/MethodName:
+  Exclude:
+    - lib/acts_as_ltree/arel.rb
