@@ -1,7 +1,7 @@
 require "bundler/gem_tasks"
 require 'rspec/core/rake_task'
 
-task :default => :spec
+task :default => [:spec, :rubocop]
 
 task "db:setup" do
   db = %x[psql -c "create database acts_as_ltree_test"]
@@ -17,4 +17,8 @@ task "db:setup" do
   else 
   	puts ltree
   end
+end
+
+task :rubocop do
+	puts %x[rubocop]
 end
