@@ -38,7 +38,7 @@ module ActsAsLtree
         fail ArgumentError, "exact_depth must be an Integer" if exact_depth && !exact_depth.is_a?(Integer)
         fail ArgumentError, "exact_depth cannot be used with min_depth or max_depth" if exact_depth && (min_depth || max_depth)
 
-        if (!min_depth.nil? && min_depth.eql?(max_depth))
+        if !min_depth.nil? && min_depth.eql?(max_depth)
           exact_depth = min_depth
         end
 
