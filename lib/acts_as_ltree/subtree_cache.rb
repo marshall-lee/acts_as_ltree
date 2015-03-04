@@ -32,15 +32,14 @@ module ActsAsLtree
       descendants = object.descendants
       unless max_depth
         cache = self
-        descendants.extending do
+        descendants.extending! do
           define_method :load do
             descendant_depths = cache.all_depths.select{ |depth| depth > object.depth }
             @records = cache.group_by_depth.values_at(*descendant_depths).flatten
           end
         end
-      else
-        descendants
       end
+      descendants
     end
 
     attr_reader :root_object, :max_depth, :proxy_options
