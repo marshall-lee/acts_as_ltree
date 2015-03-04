@@ -2,48 +2,51 @@ require 'active_support/proxy_object'
 
 module ActsAsLtree
   class SubtreeCache
-    def initialize(root_object, options={})
-      @root_object       = root_object
-      @proxy_options     = options
-
-      proxy_options[:cache] = self
+    def initialize(root_object, options = {})
+      @root_object = root_object
+      @options     = options
     end
 
     def children_for(object)
-      relative_depth = object.depth - root_depth
-      cache = self
-
-      object.children.extending do
-        define_method :load do
-          @records = (cache.group_by_depth[object.depth+1] || []).select do |obj|
-            obj.send(cache.proxy_options[:column_name]).start_with? "#{object.path}."
-          end.map do |obj|
-            if !cache.max_depth || relative_depth + 1 < cache.max_depth
-              Proxy.new obj, cache.proxy_options
-            else
-              obj
-            end
-          end
-        end
+      children = with_depth_equal(object.depth + 1).select do |obj|
+        obj.send(options[:column_name]).start_with? "#{object.path}."
       end
+      children.map! { |obj| proxify(obj) }
     end
 
     def descendants_for(object)
-      descendants = object.descendants
-      unless max_depth
-        cache = self
-        descendants.extending do
-          define_method :load do
-            descendant_depths = cache.all_depths.select{ |depth| depth > object.depth }
-            @records = cache.group_by_depth.values_at(*descendant_depths).flatten
-          end
-        end
+      descendant_depths = all_depths.select { |depth| depth > object.depth }
+      group_by_depth.values_at(*descendant_depths).flatten
+    end
+
+    def all_descendants?
+      !max_depth
+    end
+
+    def proxify(object)
+      relative_depth = object.depth - root_depth
+      if all_descendants? || relative_depth <= max_depth
+        Proxy.new object, self
       else
-        descendants
+        object
       end
     end
 
-    attr_reader :root_object, :max_depth, :proxy_options
+    private
+
+    attr_reader :root_object, :options
+
+    def column_name
+      options[:column_name]
+    end
+
+    def max_depth
+      options[:max_depth]
+    end
+
+    def with_depth_equal(depth)
+      group_by_depth[depth] || []
+    end
 
     def root_depth
       root_object.depth
@@ -58,9 +61,9 @@ module ActsAsLtree
     end
 
     class Proxy < ActiveSupport::ProxyObject
-      def initialize(object, options={})
+      def initialize(object, cache)
         @object      = object
-        @cache       = options[:cache] || SubtreeCache.new(object, options)
+        @cache       = cache
       end
 
       def respond_to_missing?(method, include_private = false)
@@ -73,11 +76,25 @@ module ActsAsLtree
       end
 
       def children
-        @cache.children_for(@object)
+        cache, object = @cache, @object
+        @object.children.extending! do
+          define_method :load do
+            @records = cache.children_for(object)
+          end
+        end
       end
 
       def descendants
-        @cache.descendants_for(@object)
+        descendants = @object.descendants
+        if @cache.all_descendants?
+          cache, object = @cache, @object
+          descendants.extending! do
+            define_method :load do
+              @records = cache.descendants_for(object)
+            end
+          end
+        end
+        descendants
       end
     end
   end

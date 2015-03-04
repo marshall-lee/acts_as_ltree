@@ -1,0 +1,33 @@
+Style/StringLiterals:
+  Enabled: false
+
+Style/HashSyntax:
+  Enabled: false
+  EnforcedStyle: ruby19_no_mixed_keys
+
+Style/Documentation:
+  Enabled: false
+
+Style/Alias:
+  Exclude:
+    - lib/acts_as_ltree/arel.rb
+
+Style/SingleLineMethods:
+  Exclude:
+    - lib/acts_as_ltree/arel.rb
+
+Style/MethodDefParentheses:
+  Exclude:
+    - lib/acts_as_ltree/arel.rb
+
+Style/MethodName:
+  Exclude:
+    - lib/acts_as_ltree/arel.rb
+
+Metrics/MethodLength:
+  Exclude:
+    - lib/acts_as_ltree.rb
+
+Metrics/AbcSize:
+  Exclude:
+    - lib/acts_as_ltree.rb
