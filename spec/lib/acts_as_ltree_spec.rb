@@ -88,7 +88,7 @@ RSpec.describe ActsAsLtree do
 
       describe "with min_depth" do
         it "fetches proper results" do
-          expect(Tag.descendants_of('programming', {min_depth: 2})).to contain_exactly(rspec, ruby_on_rails, rspec_rails, sinatra)
+          expect(Tag.descendants_of('programming', min_depth: 2)).to contain_exactly(rspec, ruby_on_rails, rspec_rails, sinatra)
         end
 
         it "raises proper exception" do 
@@ -98,7 +98,7 @@ RSpec.describe ActsAsLtree do
 
       describe "with max_depth" do
         it "fetches proper results" do
-          expect(Tag.descendants_of('programming', {max_depth: 2})).to contain_exactly(programming, ruby, rspec, ruby_on_rails, compsci)
+          expect(Tag.descendants_of('programming', max_depth: 2)).to contain_exactly(programming, ruby, rspec, ruby_on_rails, compsci)
         end
 
         it "raises proper exception" do 
@@ -108,7 +108,7 @@ RSpec.describe ActsAsLtree do
 
       describe "with exact_depth" do
         it "fetches proper results" do
-          expect(Tag.descendants_of('programming', {exact_depth: 1})).to contain_exactly(ruby, compsci)
+          expect(Tag.descendants_of('programming', exact_depth: 1)).to contain_exactly(ruby, compsci)
         end
 
         it "raises proper exception" do 
@@ -118,7 +118,7 @@ RSpec.describe ActsAsLtree do
 
       describe "with min and max depth" do
         it "fetches proper results" do
-          expect(Tag.descendants_of('programming', {min_depth: 1, max_depth: 2})).to contain_exactly(ruby, ruby_on_rails, rspec, compsci)
+          expect(Tag.descendants_of('programming', min_depth: 1, max_depth: 2)).to contain_exactly(ruby, ruby_on_rails, rspec, compsci)
         end
 
         it "raises proper exception" do 
