@@ -60,10 +60,11 @@ module ActsAsLtree
     end
 
     private
-      attr_reader :model, :column_name
 
-      def column
-        @column ||= model.arel_table[column_name]
-      end
+    attr_reader :model, :column_name
+
+    def column
+      @column ||= model.arel_table[column_name]
+    end
   end
 end
