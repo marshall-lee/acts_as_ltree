@@ -39,7 +39,7 @@ module ActsAsLtree
       end
 
       define_method :preload_descendants do |options = {}|
-        SubtreeCache::Proxy.new(self, base_options.merge(options))
+        SubtreeCache.new(self, base_options.merge(options)).proxify(self)
       end
 
       define_method :new_child do |attributes|
