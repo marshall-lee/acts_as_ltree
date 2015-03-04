@@ -33,11 +33,26 @@ module ActsAsLtree
           )
         )
       else
-        # TODO: call matching_lquery with "#{path}.*{n,m}" query (or even "#{path}.*{n} if exact_depth is given)
-        #       raise ArgumentError if one of *_depth options is not Integer (if present)
-        #       raise ArgumentError if exact_depth is present but min_depth and max_depth are present
-        #       if min_depth == max_depth then perform *{n} query instead of *{n,n}
-        raise NotImplementedError
+        raise ArgumentError, "min_depth isn't int" if min_depth && !min_depth.is_a?(Integer)
+        raise ArgumentError, "max_depth isn't int" if max_depth && !max_depth.is_a?(Integer)
+        raise ArgumentError, "exact_depth isn't int" if exact_depth && !exact_depth.is_a?(Integer)
+        raise ArgumentError, "ALL" if exact_depth && (min_depth || max_depth)
+
+        if (!min_depth.nil? && min_depth.eql?(max_depth))
+          exact_depth = min_depth
+        end
+
+        if exact_depth          
+            matching_lquery(relation, "#{path}.*{#{exact_depth}}")
+        elsif min_depth
+          if max_depth
+              matching_lquery(relation, "#{path}.*{#{min_depth},#{max_depth}}")
+          else
+              matching_lquery(relation, "#{path}.*{#{min_depth},}")
+          end
+        elsif max_depth
+            matching_lquery(relation, "#{path}.*{,#{max_depth}}")
+        end
       end
     end
 
