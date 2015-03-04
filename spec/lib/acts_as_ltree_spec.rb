@@ -91,7 +91,7 @@ RSpec.describe ActsAsLtree do
           expect(Tag.descendants_of('programming', min_depth: 2)).to contain_exactly(rspec, ruby_on_rails, rspec_rails, sinatra)
         end
 
-        it "raises proper exception" do 
+        it "raises proper exception" do
           expect {Tag.descendants_of('programming', min_depth: "2")}.to raise_error(ArgumentError)
         end
       end
@@ -101,7 +101,7 @@ RSpec.describe ActsAsLtree do
           expect(Tag.descendants_of('programming', max_depth: 2)).to contain_exactly(programming, ruby, rspec, ruby_on_rails, compsci)
         end
 
-        it "raises proper exception" do 
+        it "raises proper exception" do
           expect {Tag.descendants_of('programming', max_depth: "2")}.to raise_error(ArgumentError)
         end
       end
@@ -111,7 +111,7 @@ RSpec.describe ActsAsLtree do
           expect(Tag.descendants_of('programming', exact_depth: 1)).to contain_exactly(ruby, compsci)
         end
 
-        it "raises proper exception" do 
+        it "raises proper exception" do
           expect {Tag.descendants_of('programming', exact_depth: "2")}.to raise_error(ArgumentError)
         end
       end
@@ -121,11 +121,10 @@ RSpec.describe ActsAsLtree do
           expect(Tag.descendants_of('programming', min_depth: 1, max_depth: 2)).to contain_exactly(ruby, ruby_on_rails, rspec, compsci)
         end
 
-        it "raises proper exception" do 
+        it "raises proper exception" do
           expect {Tag.descendants_of('programming', min_depth: 3, exact_depth: 2)}.to raise_error(ArgumentError)
         end
       end
-      
     end
 
     describe "ancestors_of" do
