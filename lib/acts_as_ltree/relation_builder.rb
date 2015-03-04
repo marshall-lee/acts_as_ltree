@@ -23,7 +23,7 @@ module ActsAsLtree
       )
     end
 
-    def descendants(relation, path, options={})
+    def descendants(relation, path, options = {})
       min_depth, max_depth, exact_depth = options.values_at :min_depth, :max_depth, :exact_depth
       unless min_depth || max_depth || exact_depth
         relation.where(

@@ -2,7 +2,7 @@ require 'active_support/proxy_object'
 
 module ActsAsLtree
   class SubtreeCache
-    def initialize(root_object, options={})
+    def initialize(root_object, options = {})
       @root_object       = root_object
       @proxy_options     = options
 
@@ -15,7 +15,7 @@ module ActsAsLtree
 
       object.children.extending do
         define_method :load do
-          @records = (cache.group_by_depth[object.depth+1] || []).select do |obj|
+          @records = (cache.group_by_depth[object.depth + 1] || []).select do |obj|
             obj.send(cache.proxy_options[:column_name]).start_with? "#{object.path}."
           end.map do |obj|
             if !cache.max_depth || relative_depth + 1 < cache.max_depth
@@ -58,7 +58,7 @@ module ActsAsLtree
     end
 
     class Proxy < ActiveSupport::ProxyObject
-      def initialize(object, options={})
+      def initialize(object, options = {})
         @object      = object
         @cache       = options[:cache] || SubtreeCache.new(object, options)
       end

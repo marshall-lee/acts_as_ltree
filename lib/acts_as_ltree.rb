@@ -5,14 +5,14 @@ module ActsAsLtree
   extend ActiveSupport::Concern
 
   module ClassMethods
-    def acts_as_ltree(opts={})
+    def acts_as_ltree(opts = {})
       column_name = opts[:on] || :path
       relation_builder = RelationBuilder.new(self, column_name)
       base_options = {
         column_name: column_name
       }
 
-      define_singleton_method :descendants_of do |path, options={}|
+      define_singleton_method :descendants_of do |path, options = {}|
         relation_builder.descendants(self, path, options)
       end
 
@@ -38,7 +38,7 @@ module ActsAsLtree
         self.class.descendants_of(path, min_depth: 1)
       end
 
-      define_method :preload_descendants do |options={}|
+      define_method :preload_descendants do |options = {}|
         SubtreeCache::Proxy.new(self, base_options.merge(options))
       end
 
