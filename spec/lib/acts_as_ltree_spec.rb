@@ -82,47 +82,103 @@ RSpec.describe ActsAsLtree do
 
   describe "scope" do
     describe "descendants_of" do
+      let(:descendants) {
+        Tag.descendants_of('programming.ruby.ruby_on_rails')
+      }
+
       it "fetches proper results" do
-        expect(Tag.descendants_of('programming.ruby.ruby_on_rails')).to contain_exactly(ruby_on_rails, sinatra, rspec_rails)
+        expect(descendants).to contain_exactly(ruby_on_rails, sinatra, rspec_rails)
       end
 
       describe "with min_depth" do
+        let(:descendants) {
+          Tag.descendants_of('programming', min_depth: 2)
+        }
+
         it "fetches proper results" do
-          expect(Tag.descendants_of('programming', min_depth: 2)).to contain_exactly(rspec, ruby_on_rails, rspec_rails, sinatra)
+          expect(descendants).to contain_exactly(rspec, ruby_on_rails, rspec_rails, sinatra)
         end
 
-        it "raises proper exception" do
-          expect {Tag.descendants_of('programming', min_depth: "2")}.to raise_error(ArgumentError)
+        describe "when passing non-integer value" do
+          it "raises proper exception" do
+            expect {
+              Tag.descendants_of('programming', min_depth: "2")
+            }.to raise_error(ArgumentError)
+          end
         end
       end
 
       describe "with max_depth" do
+        let(:descendants) {
+          Tag.descendants_of('programming', max_depth: 2)
+        }
+
         it "fetches proper results" do
-          expect(Tag.descendants_of('programming', max_depth: 2)).to contain_exactly(programming, ruby, rspec, ruby_on_rails, compsci)
+          expect(descendants).to contain_exactly(programming, ruby, rspec, ruby_on_rails, compsci)
         end
 
-        it "raises proper exception" do
-          expect {Tag.descendants_of('programming', max_depth: "2")}.to raise_error(ArgumentError)
+        describe "when passing non-integer value" do
+          it "raises proper exception" do
+            expect {
+              Tag.descendants_of('programming', max_depth: "2")
+            }.to raise_error(ArgumentError)
+          end
         end
       end
 
       describe "with exact_depth" do
+        let(:descendants) {
+          Tag.descendants_of('programming', exact_depth: 1)
+        }
+
         it "fetches proper results" do
-          expect(Tag.descendants_of('programming', exact_depth: 1)).to contain_exactly(ruby, compsci)
+          expect(descendants).to contain_exactly(ruby, compsci)
         end
 
-        it "raises proper exception" do
-          expect {Tag.descendants_of('programming', exact_depth: "2")}.to raise_error(ArgumentError)
+        describe "when passing non-integer value" do
+          it "raises proper exception" do
+            expect {
+              Tag.descendants_of('programming', exact_depth: "2")
+            }.to raise_error(ArgumentError)
+          end
+        end
+
+        describe "when using together with max_depth or min_depth" do
+          it "raises proper exception" do
+            expect {
+              Tag.descendants_of('programming', min_depth: 3, exact_depth: 2)
+            }.to raise_error(ArgumentError)
+          end
         end
       end
 
       describe "with min and max depth" do
+        let(:descendants) {
+          Tag.descendants_of('programming', min_depth: 1, max_depth: 2)
+        }
+
         it "fetches proper results" do
-          expect(Tag.descendants_of('programming', min_depth: 1, max_depth: 2)).to contain_exactly(ruby, ruby_on_rails, rspec, compsci)
+          expect(descendants).to contain_exactly(ruby, ruby_on_rails, rspec, compsci)
         end
 
-        it "raises proper exception" do
-          expect {Tag.descendants_of('programming', min_depth: 3, exact_depth: 2)}.to raise_error(ArgumentError)
+        describe "when passing min_depth: false" do
+          let(:descendants) {
+            Tag.descendants_of('programming', min_depth: false, max_depth: 2)
+          }
+
+          it "actualy doesn't use min_depth" do
+            expect(descendants).to contain_exactly(programming, ruby, ruby_on_rails, rspec, compsci)
+          end
+        end
+
+        describe "when passing max_depth: false" do
+          let(:descendants) {
+            Tag.descendants_of('programming', min_depth: 2, max_depth: false)
+          }
+
+          it "actualy doesn't use max_depth" do
+            expect(descendants).to contain_exactly(rspec, ruby_on_rails, rspec_rails, sinatra)
+          end
         end
       end
     end

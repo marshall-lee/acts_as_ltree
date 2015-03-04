@@ -44,14 +44,8 @@ module ActsAsLtree
 
         if exact_depth
           matching_lquery(relation, "#{path}.*{#{exact_depth}}")
-        elsif min_depth
-          if max_depth
-            matching_lquery(relation, "#{path}.*{#{min_depth},#{max_depth}}")
-          else
-            matching_lquery(relation, "#{path}.*{#{min_depth},}")
-          end
-        elsif max_depth
-          matching_lquery(relation, "#{path}.*{,#{max_depth}}")
+        else
+          matching_lquery(relation, "#{path}.*{#{min_depth || nil},#{max_depth || nil}}")
         end
       end
     end
