@@ -38,9 +38,6 @@ RSpec.describe ActsAsLtree do
   let!(:compsci)       { Tag.create path: 'programming.computer_science' }
 
   describe "children" do
-    # TODO: change implementation and remove pending
-    before { pending "new implementation is missing" }
-
     it "fetches proper results" do
       expect(programming.children).to contain_exactly(ruby, compsci)
       expect(ruby.children).to contain_exactly(ruby_on_rails, rspec)
@@ -58,9 +55,6 @@ RSpec.describe ActsAsLtree do
   end
 
   describe "descendants" do
-    # TODO: change implementation and remove pending
-    before { pending "new implementation is missing" }
-
     it "fetches proper results" do
       expect(ruby.descendants).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
     end
@@ -93,19 +87,45 @@ RSpec.describe ActsAsLtree do
       end
 
       describe "with min_depth" do
-        # TODO: add specs
-        pending "not implemented"
+        it "fetches proper results" do
+          expect(Tag.descendants_of('programming', {min_depth: 2})).to contain_exactly(rspec, ruby_on_rails, rspec_rails, sinatra)
+        end
+
+        it "raises proper exception" do 
+          expect {Tag.descendants_of('programming', min_depth: "2")}.to raise_error(ArgumentError)
+        end
       end
 
       describe "with max_depth" do
-        # TODO: add specs
-        pending "not implemented"
+        it "fetches proper results" do
+          expect(Tag.descendants_of('programming', {max_depth: 2})).to contain_exactly(programming, ruby, rspec, ruby_on_rails, compsci)
+        end
+
+        it "raises proper exception" do 
+          expect {Tag.descendants_of('programming', max_depth: "2")}.to raise_error(ArgumentError)
+        end
       end
 
       describe "with exact_depth" do
-        # TODO: add specs
-        pending "not implemented"
+        it "fetches proper results" do
+          expect(Tag.descendants_of('programming', {exact_depth: 1})).to contain_exactly(ruby, compsci)
+        end
+
+        it "raises proper exception" do 
+          expect {Tag.descendants_of('programming', exact_depth: "2")}.to raise_error(ArgumentError)
+        end
       end
+
+      describe "with min and max depth" do
+        it "fetches proper results" do
+          expect(Tag.descendants_of('programming', {min_depth: 1, max_depth: 2})).to contain_exactly(ruby, ruby_on_rails, rspec, compsci)
+        end
+
+        it "raises proper exception" do 
+          expect {Tag.descendants_of('programming', min_depth: 3, exact_depth: 2)}.to raise_error(ArgumentError)
+        end
+      end
+      
     end
 
     describe "ancestors_of" do
