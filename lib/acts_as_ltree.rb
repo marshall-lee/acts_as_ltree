@@ -7,25 +7,25 @@ module ActsAsLtree
   module ClassMethods
     def acts_as_ltree(opts = {})
       column_name = opts[:on] || :path
-      relation_builder = RelationBuilder.new(self, column_name)
+      query_builder = QueryBuilder.new(arel_table[column_name])
       base_options = {
         column_name: column_name
       }
 
       define_singleton_method :descendants_of do |path, options = {}|
-        relation_builder.descendants(self, path, options)
+        where query_builder.descendants(path, options)
       end
 
       define_singleton_method :ancestors_of do |path|
-        relation_builder.ancestors(self, path)
+        where query_builder.ancestors(path)
       end
 
       define_singleton_method :matching_lquery do |query|
-        relation_builder.matching_lquery(self, query)
+        where query_builder.matching_lquery(query)
       end
 
       define_singleton_method :matching_ltxtquery do |query|
-        relation_builder.matching_ltxtquery(self, query)
+        where query_builder.matching_ltxtquery(query)
       end
 
       define_method :children do
@@ -64,5 +64,5 @@ end
 require "acts_as_ltree/version"
 require "acts_as_ltree/arel"
 require "acts_as_ltree/railtie" if defined? Rails::Railtie
-require "acts_as_ltree/relation_builder"
+require "acts_as_ltree/query_builder"
 require "acts_as_ltree/subtree_cache"
