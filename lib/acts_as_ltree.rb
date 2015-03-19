@@ -28,44 +28,49 @@ module ActsAsLtree
         where query_builder.matching_ltxtquery(query)
       end
 
-      define_method :children do
-        self_and_descendants(exact_depth: 1)
-      end
+      class_eval <<-INSTANCE_METHODS
 
-      define_method :descendants do |options = {}|
-        self_and_descendants(options).where(
-          self.class.arel_table[self.class.primary_key].not_eq(id)
-          )
-      end
+        def strict_descendants
+          self_and_descendants(min_depth: 1)
+        end
 
-      define_method :self_and_descendants do |options = {}|
-        path = self[column_name]
-        self.class.descendants_of(path, options)
-      end
+        def children
+          self_and_descendants(exact_depth: 1)
+        end
 
-      define_method :strict_descendants do
-        self_and_descendants(min_depth: 1)
-      end
+        def descendants(options = {})
+          self_and_descendants(options).where(
+            self.class.arel_table[self.class.primary_key].not_eq(id)
+            )
+        end
 
-      define_method :preload_descendants do |options = {}|
-        SubtreeCache.new(self, base_options.merge(options)).proxify(self)
-      end
+        def self_and_descendants(options = {})
+          path = self.#{column_name}
+          self.class.descendants_of(path, options)
+        end
 
-      define_method :new_child do |attributes|
-        leaf_label = attributes.delete(:leaf_label)
-        attributes[column_name] = "#{path}.#{leaf_label}"
-        self.class.new(attributes)
-      end
+        def preload_descendants(options = {})
+          SubtreeCache.new(self, #{base_options}.merge(options)).proxify(self)
+        end
 
-      define_method :create_child do |attributes|
-        leaf_label = attributes.delete(:leaf_label)
-        attributes[column_name] = "#{path}.#{leaf_label}"
-        self.class.create(attributes)
-      end
+        def depth
+          self.#{column_name}.count('.')
+        end
 
-      define_method :depth do
-        self[column_name].count('.')
-      end
+        def new_child(attributes)
+          leaf_label = attributes.delete(:leaf_label)
+          attributes["#{column_name}"] = "\#{path}.\#{leaf_label}"
+          self.class.new(attributes)
+        end
+
+        def create_child(attributes)
+          leaf_label = attributes.delete(:leaf_label)
+          attributes["#{column_name}"] = "\#{path}.\#{leaf_label}"
+          self.class.create(attributes)
+        end
+
+      INSTANCE_METHODS
+
     end
   end
 end
