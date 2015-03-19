@@ -29,11 +29,13 @@ module ActsAsLtree
       end
 
       define_method :children do
-        self.self_and_descendants(exact_depth: 1)
+        self_and_descendants(exact_depth: 1)
       end
 
       define_method :descendants do |options = {}|
-        self.self_and_descendants(options).where self.class.arel_table[self.class.primary_key].not_eq(self.id)
+        self_and_descendants(options).where(
+          self.class.arel_table[self.class.primary_key].not_eq(id)
+          )
       end
 
       define_method :self_and_descendants do |options = {}|
@@ -42,7 +44,7 @@ module ActsAsLtree
       end
 
       define_method :strict_descendants do
-        self.self_and_descendants(min_depth: 1)
+        self_and_descendants(min_depth: 1)
       end
 
       define_method :preload_descendants do |options = {}|
