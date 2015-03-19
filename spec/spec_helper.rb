@@ -2,6 +2,9 @@ require 'bundler/setup'
 require 'rails'
 require 'database_cleaner'
 require 'acts_as_ltree'
+require 'coveralls'
+
+Coveralls.wear!
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

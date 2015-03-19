@@ -33,5 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "with_model", "~> 1.2.1"
   spec.add_development_dependency "rspec", "~> 3.2.0"
   spec.add_development_dependency "database_cleaner", "~> 1.4.0"
-  spec.add_development_dependency 'rubocop' 
+  spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'coveralls'
 end
