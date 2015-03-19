@@ -46,6 +46,10 @@ RSpec.describe ActsAsLtree do
       expect(ruby_on_rails.children).to contain_exactly(sinatra, rspec_rails)
     end
 
+    it "returns proper data type" do
+      expect(programming.children).to be_kind_of(ActiveRecord::Relation)
+    end
+
     it "allows traversing" do
       results = programming.children.flat_map do |tag1|
         [tag1] + tag1.children.flat_map do |tag2|
@@ -60,17 +64,29 @@ RSpec.describe ActsAsLtree do
     it "fetches proper results" do
       expect(ruby.descendants).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
     end
+
+    it "returns proper data type" do
+      expect(ruby.descendants).to be_kind_of(ActiveRecord::Relation)
+    end
   end
 
   describe "self_and_descendants" do
     it "fetches proper results" do
       expect(ruby.self_and_descendants).to contain_exactly(ruby, ruby_on_rails, rspec, sinatra, rspec_rails)
     end
+
+    it "returns proper data type" do
+      expect(ruby.self_and_descendants).to be_kind_of(ActiveRecord::Relation)
+    end
   end
 
   describe "strict_descendants" do
     it "fetches proper results" do
       expect(ruby.strict_descendants).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
+    end
+
+    it "returns proper data type" do
+      expect(ruby.strict_descendants).to be_kind_of(ActiveRecord::Relation)
     end
   end
 
@@ -82,6 +98,10 @@ RSpec.describe ActsAsLtree do
     it "matches proper path" do
       expect(programming.create_child(leaf_label: 'lambda').path).to eq('programming.lambda')
     end
+
+    it "returns proper data type" do
+      expect(programming.create_child(leaf_label: 'lambda')).to be_kind_of(Tag)
+    end
   end
 
   describe "new children making method" do
@@ -91,6 +111,10 @@ RSpec.describe ActsAsLtree do
 
     it "matches proper path" do
       expect(programming.new_child(leaf_label: 'lambda').path).to eq('programming.lambda')
+    end
+
+    it "returns proper data type" do
+      expect(programming.new_child(leaf_label: 'lambda')).to be_kind_of(Tag)
     end
   end
 
@@ -102,6 +126,10 @@ RSpec.describe ActsAsLtree do
 
       it "fetches proper results" do
         expect(descendants).to contain_exactly(ruby_on_rails, sinatra, rspec_rails)
+      end
+
+      it "returns proper data type" do
+        expect(descendants).to be_kind_of(ActiveRecord::Relation)
       end
 
       describe "with min_depth" do
@@ -200,6 +228,10 @@ RSpec.describe ActsAsLtree do
     describe "ancestors_of" do
       it "fetches proper results" do
         expect(Tag.ancestors_of('programming.ruby.ruby_on_rails')).to contain_exactly(ruby_on_rails, ruby, programming)
+      end
+
+      it "returns proper data type" do
+        expect(Tag.ancestors_of('programming')).to be_kind_of(ActiveRecord::Relation)
       end
     end
 
