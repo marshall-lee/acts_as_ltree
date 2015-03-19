@@ -41,7 +41,7 @@ module ActsAsLtree
         self.class.descendants_of(path, options)
       end
 
-      define_method :strict_descendants do |options = {}|
+      define_method :strict_descendants do
         self.self_and_descendants(min_depth: 1)
       end
 
