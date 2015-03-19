@@ -6,6 +6,10 @@ rvm:
   - 2.2
   - jruby-19mode
   - rbx-2
+  
+matrix:
+  allow_failures:
+    - rvm: rbx-2
 
 before_script:
   - "bundle exec rake db:setup PGUSER=postgres"
