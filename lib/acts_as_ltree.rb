@@ -29,13 +29,22 @@ module ActsAsLtree
       end
 
       define_method :children do
-        path = self[column_name]
-        self.class.descendants_of(path, exact_depth: 1)
+        self_and_descendants(exact_depth: 1)
       end
 
-      define_method :descendants do
+      define_method :descendants do |options = {}|
+        self_and_descendants(options).where(
+          self.class.arel_table[self.class.primary_key].not_eq(id)
+          )
+      end
+
+      define_method :self_and_descendants do |options = {}|
         path = self[column_name]
-        self.class.descendants_of(path, min_depth: 1)
+        self.class.descendants_of(path, options)
+      end
+
+      define_method :strict_descendants do
+        self_and_descendants(min_depth: 1)
       end
 
       define_method :preload_descendants do |options = {}|

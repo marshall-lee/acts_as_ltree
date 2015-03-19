@@ -18,6 +18,8 @@ RSpec.describe ActsAsLtree do
     it { should respond_to(:children) }
     it { should respond_to(:new_child) }
     it { should respond_to(:create_child) }
+    it { should respond_to(:self_and_descendants) }
+    it { should respond_to(:strict_descendants) }
   end
 
   describe "class methods" do
@@ -57,6 +59,18 @@ RSpec.describe ActsAsLtree do
   describe "descendants" do
     it "fetches proper results" do
       expect(ruby.descendants).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
+    end
+  end
+
+  describe "self_and_descendants" do
+    it "fetches proper results" do
+      expect(ruby.self_and_descendants).to contain_exactly(ruby, ruby_on_rails, rspec, sinatra, rspec_rails)
+    end
+  end
+
+  describe "strict_descendants" do
+    it "fetches proper results" do
+      expect(ruby.strict_descendants).to contain_exactly(ruby_on_rails, rspec, sinatra, rspec_rails)
     end
   end
 
