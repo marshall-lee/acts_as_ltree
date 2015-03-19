@@ -29,12 +29,12 @@ module ActsAsLtree
       end
 
       define_method :children do
-        path = send(column_name)
+        path = self[column_name]
         self.class.descendants_of(path, exact_depth: 1)
       end
 
       define_method :descendants do
-        path = send(column_name)
+        path = self[column_name]
         self.class.descendants_of(path, min_depth: 1)
       end
 
@@ -55,7 +55,7 @@ module ActsAsLtree
       end
 
       define_method :depth do
-        send(column_name).count('.')
+        self[column_name].count('.')
       end
     end
   end

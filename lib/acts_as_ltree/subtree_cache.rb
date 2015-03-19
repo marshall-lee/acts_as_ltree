@@ -9,7 +9,7 @@ module ActsAsLtree
 
     def children_for(object)
       children = with_depth_equal(object.depth + 1).select do |obj|
-        obj.send(column_name).start_with? "#{object.path}."
+        obj[column_name].start_with? "#{object.path}."
       end
       children.map! { |obj| proxify(obj) }
     end
