@@ -32,7 +32,7 @@ module Arel
 
   module Visitors
     class DepthFirst
-      alias :visit_Arel_Nodes_LtreeBinary  :binary
+      alias :visit_Arel_Nodes_LtreeBinary :binary
     end
 
     class ToSql
