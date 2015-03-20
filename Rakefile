@@ -5,7 +5,7 @@ require 'rubocop/rake_task'
 RSpec::Core::RakeTask.new
 RuboCop::RakeTask.new
 
-task :default => [:spec, :rubocop]
+task :default => :spec
 
 task 'db:setup' do
   if system("createdb acts_as_ltree_test")
