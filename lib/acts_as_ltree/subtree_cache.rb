@@ -4,7 +4,7 @@ module ActsAsLtree
   class SubtreeCache
     def initialize(root_object, options = {})
       @root_object = root_object
-      @options     = options
+      @options = options
     end
 
     def children_for(object)
@@ -62,8 +62,8 @@ module ActsAsLtree
 
     class Proxy < ActiveSupport::ProxyObject
       def initialize(object, cache)
-        @object      = object
-        @cache       = cache
+        @object = object
+        @cache = cache
       end
 
       def respond_to_missing?(method, include_private = false)
