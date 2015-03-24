@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/marshall-lee/acts_as_ltree.svg)](https://travis-ci.org/marshall-lee/acts_as_ltree)
 [![Code Climate](https://codeclimate.com/github/marshall-lee/acts_as_ltree/badges/gpa.svg)](https://codeclimate.com/github/marshall-lee/acts_as_ltree)
 [![Coverage Status](https://coveralls.io/repos/marshall-lee/acts_as_ltree/badge.svg)](https://coveralls.io/r/marshall-lee/acts_as_ltree)
+[![Dependency Status](https://gemnasium.com/marshall-lee/acts_as_ltree.svg)](https://gemnasium.com/marshall-lee/acts_as_ltree)
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/acts_as_ltree`. To experiment with that code, run `bin/console` for an interactive prompt.
 
