@@ -1,5 +1,7 @@
 # acts_as_ltree
 
+[![Join the chat at https://gitter.im/marshall-lee/acts_as_ltree](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/marshall-lee/acts_as_ltree?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/marshall-lee/acts_as_ltree.svg)](https://travis-ci.org/marshall-lee/acts_as_ltree)
 [![Code Climate](https://codeclimate.com/github/marshall-lee/acts_as_ltree/badges/gpa.svg)](https://codeclimate.com/github/marshall-lee/acts_as_ltree)
 [![Coverage Status](https://coveralls.io/repos/marshall-lee/acts_as_ltree/badge.svg)](https://coveralls.io/r/marshall-lee/acts_as_ltree)
