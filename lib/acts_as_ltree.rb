@@ -7,65 +7,71 @@ module ActsAsLtree
   module ClassMethods
     def acts_as_ltree(opts = {})
       column_name = opts[:on] || :path
-      query_builder = QueryBuilder.new(arel_table[column_name])
-      base_options = {
-        column_name: column_name
-      }
 
-      define_singleton_method :descendants_of do |path, options = {}|
-        where query_builder.descendants(path, options)
-      end
+      instance_eval <<-CLASS_METHODS
+        def ltree_query_builder
+          @query_builder ||= ActsAsLtree::QueryBuilder.new(arel_table[:#{column_name}])
+        end
 
-      define_singleton_method :ancestors_of do |path|
-        where query_builder.ancestors(path)
-      end
+        def descendants_of(path, options={})
+          where ltree_query_builder.descendants(path, options)
+        end
 
-      define_singleton_method :matching_lquery do |query|
-        where query_builder.matching_lquery(query)
-      end
+        def ancestors_of(path)
+          where ltree_query_builder.ancestors(path)
+        end
 
-      define_singleton_method :matching_ltxtquery do |query|
-        where query_builder.matching_ltxtquery(query)
-      end
+        def matching_lquery(query)
+          where ltree_query_builder.matching_lquery(query)
+        end
 
-      define_method :children do
-        self_and_descendants(exact_depth: 1)
-      end
+        def matching_ltxtquery(query)
+          where ltree_query_builder.matching_ltxtquery(query)
+        end
+      CLASS_METHODS
 
-      define_method :descendants do |options = {}|
-        self_and_descendants(options).where(
-          self.class.arel_table[self.class.primary_key].not_eq(id)
-          )
-      end
+      class_eval <<-INSTANCE_METHODS
 
-      define_method :self_and_descendants do |options = {}|
-        path = self[column_name]
-        self.class.descendants_of(path, options)
-      end
+        def strict_descendants
+          self_and_descendants(min_depth: 1)
+        end
 
-      define_method :strict_descendants do
-        self_and_descendants(min_depth: 1)
-      end
+        def children
+          self_and_descendants(exact_depth: 1)
+        end
 
-      define_method :preload_descendants do |options = {}|
-        SubtreeCache.new(self, base_options.merge(options)).proxify(self)
-      end
+        def descendants(options = {})
+          self_and_descendants(options).where(
+            self.class.arel_table[self.class.primary_key].not_eq(id)
+            )
+        end
 
-      define_method :new_child do |attributes|
-        leaf_label = attributes.delete(:leaf_label)
-        attributes[column_name] = "#{path}.#{leaf_label}"
-        self.class.new(attributes)
-      end
+        def self_and_descendants(options = {})
+          path = self.#{column_name}
+          self.class.descendants_of(path, options)
+        end
 
-      define_method :create_child do |attributes|
-        leaf_label = attributes.delete(:leaf_label)
-        attributes[column_name] = "#{path}.#{leaf_label}"
-        self.class.create(attributes)
-      end
+        def preload_descendants(options = {})
+          SubtreeCache.new(self, {column_name: :#{column_name}}.merge(options)).proxify(self)
+        end
 
-      define_method :depth do
-        self[column_name].count('.')
-      end
+        def depth
+          self.#{column_name}.count('.')
+        end
+
+        def new_child(attributes)
+          leaf_label = attributes.delete(:leaf_label)
+          attributes["#{column_name}"] = "\#{path}.\#{leaf_label}"
+          self.class.new(attributes)
+        end
+
+        def create_child(attributes)
+          leaf_label = attributes.delete(:leaf_label)
+          attributes["#{column_name}"] = "\#{path}.\#{leaf_label}"
+          self.class.create(attributes)
+        end
+
+      INSTANCE_METHODS
     end
   end
 end
